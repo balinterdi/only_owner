@@ -5,14 +5,16 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
   context "An only_owner enhanced controller" do
     setup do
       class User #< ActiveRecord::Base
-        def name; end
       end
       
       class Profile #< ActiveRecord::Base
-        def user; end
+        def owner; end
       end
       
       class ProfilesController < ActionController::Base
+
+        def current_user; end
+        def find_profile; end
         
         def new; render :text => "new" ; end
         def create; render :text => "create"; end
@@ -31,8 +33,9 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
       @user = User.new
       @another_user = User.new
       @profile = Profile.new
-      @profile.stubs(:user).returns(@user)
-      # Profile.any_instance.stubs(:user).returns(@user)
+
+      Profile.any_instance.stubs(:owner).returns(@user)
+      ProfilesController.any_instance.stubs(:find_profile).returns(@profile)
 
       # ActionController::Routing::Routes.generate(:controller => 'profiles', :action => 'edit')
       # ActionController::Routing::Routes.stubs(:recognize_path).returns(:controller => 'profiles', :action => 'edit')        
@@ -55,7 +58,7 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
       
       context "when another user is logged in" do
         setup do
-          ProfilesController.stubs(:current_user).returns(@another_user)
+          ProfilesController.any_instance.stubs(:current_user).returns(@another_user)
         end
         
         context "the edit action" do
@@ -129,7 +132,24 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
         end
                 
       end # when another user is logged in
-        
+      
+      context "when the owner of the model/resource is logged in" do
+        setup do
+          ProfilesController.any_instance.stubs(:current_user).returns(@user)
+        end
+        context "any protected action" do
+          context "like destroy" do
+            setup do
+              ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1/destroy")
+              delete :destroy, :id => "1"
+            end
+            should "be accessible" do
+              assert_response(200)
+            end
+          end
+        end
+      end # when the owner of the model/resource is logged in
+      
     end # when no extra parameters are given
     
     context "when only certain actions are protected" do
@@ -169,7 +189,16 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
         
       end # all other actions
       
-    end
+    end # when only certain actions are protected
+    context "when certain actions are specified as not protected" do
+      setup do
+        class ProfilesController
+          only_owner :exclude => [:index]
+        end
+        #TODO: tests to be added here
+      end
+    end # "when certain actions are specified as not protected"
+    
   end # "An only_owner enhanced controller"
   
 end

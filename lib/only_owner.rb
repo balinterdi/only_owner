@@ -16,9 +16,8 @@ module OnlyOwner
   end
   
   def check_owner_access
-    # puts "XXX check_owner_access is called!!!"
-    # respond with "Unauthorized"
-    head(401) # to 
+    #FIXME: this is obviously not a general solution
+    head(401) if current_user != find_profile.owner # to 
     # or halt_filter_chain? (see filters.rb in actionpack)
   end
   
