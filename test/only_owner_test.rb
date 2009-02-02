@@ -24,31 +24,32 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
 
       end
       
+      @controller = ProfilesController.new
+      @request    = ActionController::TestRequest.new
+      @response   = ActionController::TestResponse.new
+      
+      @user = User.new
+      @another_user = User.new
+      @profile = Profile.new
+      @profile.stubs(:user).returns(@user)
+      # Profile.any_instance.stubs(:user).returns(@user)
+
+      # ActionController::Routing::Routes.generate(:controller => 'profiles', :action => 'edit')
+      # ActionController::Routing::Routes.stubs(:recognize_path).returns(:controller => 'profiles', :action => 'edit')        
+      #NOTE: the two stubs found below are needed for the routing to work
+      # the two stubs: extra_keys and generate
+      #TODO: the two stubs could probably be replaced by defining a route 
+      # as in routes.rb of a Rails app        
+      # ActionController::Routing::Routes.stubs(:generate).returns("/profiles/edit")
+      ActionController::Routing::Routes.stubs(:extra_keys).returns([])
+      
     end
     
     context "when no extra parameters are given" do
       setup do
-
-        @controller = ProfilesController.new
-        # class << @controller
         class ProfilesController
           only_owner
         end
-        @request    = ActionController::TestRequest.new
-        @response   = ActionController::TestResponse.new
-        
-        @user = User.new
-        @another_user = User.new
-        @profile = Profile.new
-        @profile.stubs(:user).returns(@user)
-        # Profile.all_instances.stubs(:user).returns(@user)
-        # ActionController::Routing::Routes.generate(:controller => 'profiles', :action => 'edit')
-        # ActionController::Routing::Routes.stubs(:recognize_path).returns(:controller => 'profiles', :action => 'edit')        
-        #NOTE: the two stubs found below are needed for the routing to work
-        #TODO: the two stubs could probably be replaced by defining a route 
-        # as in routes.rb of a Rails app        
-        # ActionController::Routing::Routes.stubs(:generate).returns("/profiles/edit")
-        ActionController::Routing::Routes.stubs(:extra_keys).returns([])
         
       end
       
@@ -127,10 +128,48 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
           end
         end
                 
-      end
+      end # when another user is logged in
         
     end # when no extra parameters are given
     
+    context "when only certain actions are protected" do
+      setup do
+        class ProfilesController
+          only_owner :only => [:destroy]          
+        end        
+      end
+      context "the protected action(s)" do
+        setup do
+          ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1/destroy/")
+          delete :destroy, :id => 1
+        end
+        should "be protected" do
+          assert_response(401)
+        end
+      end
+      context "all other actions" do
+        context "e.g a custom action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1/custom/")
+            get :custom, :id => 1
+          end
+          should "be accessible" do
+            assert_response(200)
+          end
+        end
+        context "e.g a create action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/create/")
+            post :create
+          end
+          should "be accessible" do
+            assert_response(200)
+          end
+        end
+        
+      end # all other actions
+      
+    end
   end # "An only_owner enhanced controller"
   
 end
