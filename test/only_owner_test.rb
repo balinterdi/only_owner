@@ -15,12 +15,12 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
       class ProfilesController < ActionController::Base
         
         def new; render :text => "new" ; end
-        def create; :create; end
-        def index; :index; end
+        def create; render :text => "create"; end
+        def index; render :text => "index"; end
         def edit; render :text => "edit"; end
-        def update; :update; end
-        def destroy; :destroy; end
-        def custom; :custom; end
+        def update; render :text => "update"; end
+        def destroy; render :text => "destroy"; end
+        def custom; render :text => "custom"; end
 
       end
       
@@ -47,7 +47,7 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
         #NOTE: the two stubs found below are needed for the routing to work
         #TODO: the two stubs could probably be replaced by defining a route 
         # as in routes.rb of a Rails app        
-        ActionController::Routing::Routes.stubs(:generate).returns("/profiles/edit")
+        # ActionController::Routing::Routes.stubs(:generate).returns("/profiles/edit")
         ActionController::Routing::Routes.stubs(:extra_keys).returns([])
         
       end
@@ -59,17 +59,68 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
         
         context "the edit action" do
           setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1/edit")
             get :edit
           end
           should "be protected" do
-            #TODO: check if unauthorized is available in Rails as a constant/symbol            
+            assert_response(401)
+          end
+        end
+
+        context "the update action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1/update")
+            put :update, :id => 1
+          end
+          should "be protected" do
+            assert_response(401)
+          end
+        end
+        
+        context "the destroy action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1/destroy")
+            delete :destroy, :id => 1
+          end
+          should "be protected" do
+            assert_response(401)
+          end
+        end
+
+        context "a custom action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/custom")
+            get :custom
+          end
+          should "be protected" do
             assert_response(401)
           end
         end
 
         context "the new action" do
           setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/new")
             get :new
+          end
+          should "be accessible" do
+            assert_response(200)
+          end
+        end
+
+        context "the create action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/2/create")
+            post :create, :id => 1
+          end
+          should "be accessible" do
+            assert_response(200)
+          end
+        end
+
+        context "the index action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/")
+            get :index
           end
           should "be accessible" do
             assert_response(200)

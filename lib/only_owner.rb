@@ -6,7 +6,7 @@ module OnlyOwner
   
   module ClassMethods
     def only_owner
-      before_filter :check_owner_access, :only => [:edit]
+      before_filter :check_owner_access, :except => [:new, :create, :index]
     end    
   end
   
