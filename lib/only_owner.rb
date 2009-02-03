@@ -16,8 +16,10 @@ module OnlyOwner
   end
   
   def check_owner_access
-    #FIXME: this is obviously not a general solution
-    head(401) if current_user != find_profile.owner # to 
+    model_class = self.controller_name.singularize
+    model_instance = send("find_#{model_class}", params[:id])
+    owner = model_instance.send(:owner)      
+    head(401) unless current_user == owner
     # or halt_filter_chain? (see filters.rb in actionpack)
   end
   
