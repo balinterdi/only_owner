@@ -152,6 +152,44 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
       
     end # when no extra parameters are given
     
+    context "when the default current_user method name is overridden" do
+      setup do
+        class ProfilesController
+          def logged_in_user ; end
+          only_owner :current_user => :logged_in_user
+        end        
+      end
+
+      context "and the active user is other than the owner" do
+        setup do
+          # make sure the test breaks if the :current_user option is not taken into account
+          ProfilesController.any_instance.stubs(:current_user).returns(@user)
+          ProfilesController.any_instance.stubs(:logged_in_user).returns(@another_user)
+        end
+        context "a protected action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1/destroy")
+            delete :destroy, :id => "1"
+          end
+          should "be protected" do
+            assert_response(401)
+          end
+        end
+
+        context "the index action (an unprotected action)" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/")
+            get :index
+          end
+          should "be protected" do
+            assert_response(200)
+          end
+        end        
+      end
+      # TODO: write tests for when the current_user method is overridden and the active user is the owner
+      # ...
+    end
+    
     context "when only certain actions are protected" do
       setup do
         class ProfilesController
