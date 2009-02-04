@@ -28,14 +28,15 @@ module OnlyOwner
   def check_owner_access
     model_class = self.controller_name.singularize
     if self.class.only_owner_model_finder.nil?
-      model_instance = send("find_#{model_class}", params[:id])
+      model_instance = send("find_#{model_class}")
     else
-      model_instance = send(self.class.only_owner_model_finder, params[:id])
+      model_instance = send(self.class.only_owner_model_finder)
     end
     owner = model_instance.send(self.class.only_owner_owner_association)
     current_user_ = send(self.class.only_owner_current_user)
-    head(401) unless current_user_ == owner
-    # or halt_filter_chain? (see filters.rb in actionpack)
+    #FIXME: how do I set a status so that the error page in public/401.html gets rendered?
+    render :text => "Unauthorized!", :status => :unauthorized, :layout => true unless current_user == owner
+    # head(401) unless current_user_ == owner
   end
   
 end
