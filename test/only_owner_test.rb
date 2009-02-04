@@ -19,6 +19,7 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
         def new; render :text => "new" ; end
         def create; render :text => "create"; end
         def index; render :text => "index"; end
+        def show; render :text => "show"; end
         def edit; render :text => "edit"; end
         def update; render :text => "update"; end
         def destroy; render :text => "destroy"; end
@@ -125,6 +126,16 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
           setup do
             ActionController::Routing::Routes.stubs(:generate).returns("/profiles/")
             get :index
+          end
+          should "be accessible" do
+            assert_response(200)
+          end
+        end
+        
+        context "the show action" do
+          setup do
+            ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1")
+            get :show, :id => "1"
           end
           should "be accessible" do
             assert_response(200)
