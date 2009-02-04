@@ -233,6 +233,36 @@ class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
     end
     # ----
     
+    context "when the default finder method is overridden" do
+      setup do
+        class ProfilesController
+          def get_profile; end
+          only_owner :finder => :get_profile
+        end
+        # making find_profile return nil ensures that it does not get called
+        # hmmm, mocking would be more appropriate, then.
+        ProfilesController.any_instance.stubs(:current_user).returns(@another_user)
+        
+        ProfilesController.any_instance.stubs(:find_profile).returns(nil)
+        ProfilesController.any_instance.stubs(:get_profile).returns(@profile)
+        Profile.any_instance.stubs(:owner).returns(@another_user)
+        ProfilesController.any_instance.stubs(:current_user).returns(@user)                        
+      end
+      
+      should "protect the 'destroy' action" do
+        ActionController::Routing::Routes.stubs(:generate).returns("/profiles/1/destroy")
+        delete :destroy, :id => "1"
+        assert_response(401)
+      end
+    
+      should "not protect the 'index' action" do
+        ActionController::Routing::Routes.stubs(:generate).returns("/profiles/")
+        get :index
+        assert_response(200)
+      end
+      
+    end # when the default owner method name is overridden
+    
     context "when only certain actions are protected" do
       setup do
         class ProfilesController
