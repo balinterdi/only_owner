@@ -34,9 +34,11 @@ module OnlyOwner
     end
     owner = model_instance.send(self.class.only_owner_owner_association)
     current_user_ = send(self.class.only_owner_current_user)
-    #FIXME: how do I set a status so that the error page in public/401.html gets rendered?
-    render :text => "Unauthorized!", :status => :unauthorized, :layout => true unless current_user == owner
-    # head(401) unless current_user_ == owner
+    # somehow static error pages do not get rendered by only setting the status code,
+    # so the file itself needs to be rendered explicitly
+    # rails_public_path = defined?(Rails) ? Rails.public_path : "/public"
+    render :file => "public/401.html", :status => :unauthorized and return unless current_user_ == owner
+    # render :text => "Unauthorized!", :status => :unauthorized, :layout => true unless current_user == owner
   end
   
 end
