@@ -9,6 +9,7 @@ class OnlyOwnerTest < ActionController::TestCase
       
       class Profile #< ActiveRecord::Base
         def owner; end
+        def user; end
       end
       
       class ProfilesController < ActionController::Base
@@ -35,7 +36,7 @@ class OnlyOwnerTest < ActionController::TestCase
       @another_user = User.new
       @profile = Profile.new
 
-      Profile.any_instance.stubs(:owner).returns(@user)
+      Profile.any_instance.stubs(:user).returns(@user)
       ProfilesController.any_instance.stubs(:find_profile).returns(@profile)
     end
     
@@ -165,15 +166,15 @@ class OnlyOwnerTest < ActionController::TestCase
           def user; end
         end
         class ProfilesController
-          only_owner :owner => :user
+          only_owner :owner => :owner
         end        
       end
 
       context "and the active user is other than the owner" do
         setup do
           # make sure the test breaks if the :owner option is not taken into account
-          Profile.any_instance.stubs(:user).returns(@user)
-          Profile.any_instance.stubs(:owner).returns(@another_user)
+          Profile.any_instance.stubs(:owner).returns(@user)
+          Profile.any_instance.stubs(:user).returns(@another_user)
           ProfilesController.any_instance.stubs(:current_user).returns(@another_user)
         end
         context "a protected action" do
@@ -207,7 +208,7 @@ class OnlyOwnerTest < ActionController::TestCase
         
         ProfilesController.any_instance.stubs(:find_profile).returns(nil)
         ProfilesController.any_instance.stubs(:get_profile).returns(@profile)
-        Profile.any_instance.stubs(:owner).returns(@another_user)
+        Profile.any_instance.stubs(:user).returns(@another_user)
         ProfilesController.any_instance.stubs(:current_user).returns(@user)                        
       end
       

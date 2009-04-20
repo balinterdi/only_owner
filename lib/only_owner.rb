@@ -17,7 +17,7 @@ module OnlyOwner
       cattr_accessor :only_owner_model_finder
       
       self.only_owner_current_user = options[:current_user] || :current_user
-      self.only_owner_owner_association = options[:owner] || :owner
+      self.only_owner_owner_association = options[:owner] || :user
       self.only_owner_model_finder = options[:finder]
       
       options[:except] = [:new, :create, :index, :show] unless options[:only] || options[:except]
@@ -34,11 +34,7 @@ module OnlyOwner
     end
     owner = model_instance.send(self.class.only_owner_owner_association)
     current_user_ = send(self.class.only_owner_current_user)
-    # somehow static error pages do not get rendered by only setting the status code,
-    # so the file itself needs to be rendered explicitly
-    # rails_public_path = defined?(Rails) ? Rails.public_path : "/public"
     redirect_to login_path and return unless current_user_ == owner
-    # render :text => "Unauthorized!", :status => :unauthorized, :layout => true unless current_user == owner
   end
   
 end
