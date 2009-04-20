@@ -7,8 +7,9 @@ require 'test/unit'
 
 require 'action_controller'
 require 'action_controller/test_case'
-require 'action_controller/test_process'
-require "#{File.dirname(__FILE__)}/../init"
+# require 'action_controller/test_process'
+# require "#{File.dirname(__FILE__)}/../init"
+require File.expand_path(File.dirname(__FILE__) + "/../../../../config/environment")
 
 begin
   require 'shoulda'
