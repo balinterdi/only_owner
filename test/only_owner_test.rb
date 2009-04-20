@@ -56,40 +56,28 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             get :edit
           end
-          should "be protected" do
-            assert_response(500) # Missing template public/401.html in view path
-            # assert_response(401)
-          end
+          should_redirect_to "login_path"
         end
 
         context "the update action" do
           setup do
             put :update, :id => 1
           end
-          should "be protected" do
-            assert_response(500) # Missing template public/401.html in view path
-            # assert_response(401)
-          end
+          should_redirect_to "login_path"
         end
         
         context "the destroy action" do
           setup do
             delete :destroy, :id => 1
           end
-          should "be protected" do
-            assert_response(500) # Missing template public/401.html in view path
-            # assert_response(401)
-          end
+          should_redirect_to "login_path"
         end
 
         context "a custom action" do
           setup do
             get :custom
           end
-          should "be protected" do
-            assert_response(500) # Missing template public/401.html in view path
-            # assert_response(401)
-          end
+          should_redirect_to "login_path"
         end
 
         context "the new action" do
@@ -156,10 +144,7 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             delete :destroy, :id => "1"
           end
-          should "be protected" do
-            assert_response(500) # Missing template public/401.html in view path
-            # assert_response(401)
-          end
+          should_redirect_to "login_path"
         end
 
         context "the index action (an unprotected action)" do
@@ -195,10 +180,7 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             delete :destroy, :id => "1"
           end
-          should "be protected" do
-            assert_response(500) # Missing template public/401.html in view path
-            # assert_response(401)
-          end
+          should_redirect_to "login_path"
         end
 
         context "the index action (an unprotected action)" do
@@ -229,10 +211,11 @@ class OnlyOwnerTest < ActionController::TestCase
         ProfilesController.any_instance.stubs(:current_user).returns(@user)                        
       end
       
-      should "protect the 'destroy' action" do
-        delete :destroy, :id => "1"
-        assert_response(500) # Missing template public/401.html in view path
-        # assert_response(401)
+      context "the destroy action" do
+        setup do
+          delete :destroy, :id => "1"
+        end
+        should_redirect_to "login_path"
       end
     
       context "the index action" do
@@ -253,10 +236,7 @@ class OnlyOwnerTest < ActionController::TestCase
         setup do
           delete :destroy, :id => 1
         end
-        should "be protected" do
-          assert_response(500) # Missing template public/401.html in view path
-          # assert_response(401)
-        end
+        should_redirect_to "login_path"
       end
       context "all other actions" do
         context "e.g a custom action" do

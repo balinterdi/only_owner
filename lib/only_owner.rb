@@ -37,7 +37,7 @@ module OnlyOwner
     # somehow static error pages do not get rendered by only setting the status code,
     # so the file itself needs to be rendered explicitly
     # rails_public_path = defined?(Rails) ? Rails.public_path : "/public"
-    render :file => "public/401.html", :status => :unauthorized and return unless current_user_ == owner
+    redirect_to login_path and return unless current_user_ == owner
     # render :text => "Unauthorized!", :status => :unauthorized, :layout => true unless current_user == owner
   end
   

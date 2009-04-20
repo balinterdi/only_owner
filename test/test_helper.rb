@@ -11,6 +11,10 @@ require 'action_controller/test_case'
 # require "#{File.dirname(__FILE__)}/../init"
 require File.expand_path(File.dirname(__FILE__) + "/../../../../config/environment")
 
+ActionController::Routing::Routes.draw do |map|
+  map.login '/login', :controller => "SessionsController", :action => "new"
+end
+
 begin
   require 'shoulda'
   require 'shoulda/active_record'
