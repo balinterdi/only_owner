@@ -57,28 +57,28 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             get :edit
           end
-          should_redirect_to "login_path"
+          should_redirect_to("the login screen") { login_path }
         end
 
         context "the update action" do
           setup do
             put :update, :id => 1
           end
-          should_redirect_to "login_path"
+          should_redirect_to("the login screen") { login_path }
         end
 
         context "the destroy action" do
           setup do
             delete :destroy, :id => 1
           end
-          should_redirect_to "login_path"
+          should_redirect_to("the login screen") { login_path }
         end
 
         context "a custom action" do
           setup do
             get :custom
           end
-          should_redirect_to "login_path"
+          should_redirect_to("the login screen") { login_path }
         end
 
         context "the new action" do
@@ -145,7 +145,7 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             delete :destroy, :id => "1"
           end
-          should_redirect_to "login_path"
+          should_redirect_to("the login screen") { login_path }
         end
 
         context "the index action (an unprotected action)" do
@@ -181,7 +181,7 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             delete :destroy, :id => "1"
           end
-          should_redirect_to "login_path"
+          should_redirect_to("the login screen") { login_path }
         end
 
         context "the index action (an unprotected action)" do
@@ -214,7 +214,7 @@ class OnlyOwnerTest < ActionController::TestCase
         setup do
           delete :destroy, :id => "1"
         end
-        should_redirect_to "login_path"
+        should_redirect_to("the login screen") { login_path }
       end
 
       context "the index action" do
@@ -235,7 +235,7 @@ class OnlyOwnerTest < ActionController::TestCase
         setup do
           delete :destroy, :id => 1
         end
-        should_redirect_to "login_path"
+        should_redirect_to("the login screen") { login_path }
       end
       context "all other actions" do
         context "e.g a custom action" do
