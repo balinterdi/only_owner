@@ -96,36 +96,28 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             get :new
           end
-          should "be accessible" do
-            assert_response(200)
-          end
+          should_respond_with :success
         end
 
         context "the create action" do
           setup do
             post :create, :id => 1
           end
-          should "be accessible" do
-            assert_response(200)
-          end
+          should_respond_with :success
         end
 
         context "the index action" do
           setup do
             get :index
           end
-          should "be accessible" do
-            assert_response(200)
-          end
+          should_respond_with :success
         end
         
         context "the show action" do
           setup do
             get :show, :id => "1"
           end
-          should "be accessible" do
-            assert_response(200)
-          end
+          should_respond_with :success
         end
                 
       end # when another user is logged in
@@ -139,9 +131,7 @@ class OnlyOwnerTest < ActionController::TestCase
             setup do
               delete :destroy, :id => "1"
             end
-            should "be accessible" do
-              assert_response(200)
-            end
+            should_respond_with :success
           end
         end
       end # when the owner of the model/resource is logged in
@@ -176,9 +166,7 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             get :index
           end
-          should "be protected" do
-            assert_response(200)
-          end
+          should_respond_with :success
         end        
       end
       # TODO: write tests for when the current_user method is overridden and the active user is the owner
@@ -217,9 +205,7 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             get :index
           end
-          should "be protected" do
-            assert_response(200)
-          end
+          should_respond_with :success
         end        
       end
       # TODO: write tests to make user the :user can still access the protected methods, too.
@@ -249,11 +235,12 @@ class OnlyOwnerTest < ActionController::TestCase
         # assert_response(401)
       end
     
-      should "not protect the 'index' action" do
-        get :index
-        assert_response(200)
+      context "the index action" do
+        setup do
+          get :index
+        end
+        should_respond_with :success
       end
-      
     end # when the default owner method name is overridden
     
     context "when only certain actions are protected" do
@@ -276,17 +263,13 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             get :custom, :id => 1
           end
-          should "be accessible" do
-            assert_response(200)
-          end
+          should_respond_with :success
         end
         context "e.g a create action" do
           setup do
             post :create
           end
-          should "be accessible" do
-            assert_response(200)
-          end
+          should_respond_with :success
         end
         
       end # all other actions
