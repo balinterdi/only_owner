@@ -1,6 +1,6 @@
 require File.dirname(__FILE__) + '/test_helper'
 
-class OnlyOwnerTest < ActiveSupport::TestCase # Test::Unit::TestCase
+class OnlyOwnerTest < ActionController::TestCase
   
   context "An only_owner enhanced controller" do
     setup do
