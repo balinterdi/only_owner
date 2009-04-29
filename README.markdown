@@ -1,7 +1,14 @@
-How does it work?
-=================
+# only\_owner
 
-The plugin aims to leverage the recurring -and thus tedious- task of granting access only to the owner of a resource. (e.g a user profile). Most of the time all actions of a controller, except the new-create action and possibly the index and show actions should only be allowed for the owner.
+The plugin aims to leverage the recurring -and thus tedious- task of granting access only to the owner of a resource. (e.g a user profile). Most of the time all actions of a controller with the exception of the new-create action and possibly the index and show actions should be allowed only for the owner of the record.
+
+## Installation
+
+only\_owner is a Rails plugin so installing it is as easy as this (supposing you are in the root of your Rails app):
+
+    ./script/plugin install git://github.com/balinterdi/only_owner.git
+  
+## How does it work?
 
 The plugin provides an only\_owner class method for ActionController which will deny access (redirect to the login page) to protected actions for non-owners. It does this through adding a before_filter to the chain.
 
@@ -18,8 +25,7 @@ The plugin supposes that all methods of the controller except the _new_, _create
     :only => <actions> : only the specified actions should be protected
     :except => <actions>: all actions except the specified actions should be protected
 
-Examples
-========
+## Examples
 
 1. Profile belongs_to :user, there is a find_profile method in the controller, and the current_user method returns the user that is logged in:
 
@@ -51,9 +57,8 @@ Examples
           only_owner :finder => :get_profile
         end
 
-Contact
-=======
+## Contact
 
-I appreciate any kind of feedback, be it a bug report (mostly welcome), praise, (constructive) criticism or feature proposal/request: balint@bucionrails.com
+I appreciate any kind of feedback, be it a bug report (mostly welcome), praise, (constructive) criticism or feature proposal/request: <balint@bucionrails.com>
 
-Copyright (c) 2009 [Balint Erdi (balint@bucionrails.com)], released under the MIT license
+Copyright (c) 2009 [Balint Erdi (<balint@bucionrails.com>)], released under the MIT license
