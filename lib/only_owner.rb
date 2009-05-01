@@ -20,7 +20,7 @@ module OnlyOwner
       self.only_owner_owner_association = options[:owner] || :user
       self.only_owner_model_finder = options[:finder]
       
-      options[:except] = [:new, :create, :index, :show] unless options[:only] || options[:except]
+      options[:only] = [:edit, :update, :destroy] unless options[:only] || options[:except]
       before_filter :check_owner_access, options
     end    
   end

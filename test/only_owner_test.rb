@@ -48,7 +48,7 @@ class OnlyOwnerTest < ActionController::TestCase
 
       end
 
-      context "when another user is logged in" do
+      context "and another user is logged in" do
         setup do
           ProfilesController.any_instance.stubs(:current_user).returns(@another_user)
         end
@@ -78,7 +78,7 @@ class OnlyOwnerTest < ActionController::TestCase
           setup do
             get :custom
           end
-          should_redirect_to("the login screen") { login_path }
+          should_respond_with :success
         end
 
         context "the new action" do
